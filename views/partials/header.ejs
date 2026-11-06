@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Aura & Forma | Curated Artisanal Living' %></title>
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-bar">
+    <div class="top-bar-notice">
+      ✨ <em>Complimentary carbon-neutral delivery on all orders over $100</em>
+    </div>
+    <div class="top-bar-actions">
+      <% if (user && user.role === 'admin') { %>
+        <a href="/admin" class="top-bar-admin-link">⚙️ Studio Admin Portal</a>
+      <% } else { %>
+        <a href="/login" class="top-bar-admin-link">Staff Login</a>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Site Navigation Header -->
+  <header class="site-header">
+    <div class="nav-container">
+      <!-- Brand Logo / Wordmark -->
+      <a href="/" class="brand-wrapper">
+        <span class="brand-logo">AURA & FORMA</span>
+        <span class="brand-tagline">Curated Living & Studio Goods</span>
+      </a>
+
+      <!-- Header Search Form -->
+      <form action="/products" method="GET" class="header-search">
+        <input 
+          type="text" 
+          name="search" 
+          id="searchBox" 
+          class="search-input" 
+          placeholder="Search ceramics, lighting, furniture..." 
+          value="<%= typeof currentSearch !== 'undefined' ? currentSearch : '' %>"
+          autocomplete="off"
+        >
+        <button type="submit" id="searchBtn" class="search-btn" title="Search">
+          🔍
+        </button>
+      </form>
+
+      <!-- Navigation Links -->
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link <%= currentPath === '/' ? 'active' : '' %>">Home</a></li>
+          <li><a href="/products" class="nav-link <%= currentPath === '/products' ? 'active' : '' %>">Catalogue</a></li>
+          <% if (user) { %>
+            <li><a href="/orders" id="orderHistoryNavBtn" class="nav-link <%= currentPath === '/orders' ? 'active' : '' %>">My Orders</a></li>
+          <% } %>
+        </ul>
+      </nav>
+
+      <!-- User & Cart Header Actions -->
+      <div class="header-actions">
+        <% if (user) { %>
+          <div class="user-badge">
+            <span>👤 <%= user.name %></span>
+            <% if (user.role === 'admin') { %>
+              <span class="user-role-chip">Admin</span>
+            <% } %>
+          </div>
+          <a href="/logout" id="logoutBtn" class="nav-link" style="font-size: 13px;">Sign Out</a>
+        <% } else { %>
+          <a href="/login" id="navLoginBtn" class="nav-link" style="font-size: 13px; font-weight: 600;">Sign In</a>
+          <a href="/register" id="navRegisterBtn" class="btn btn-secondary" style="padding: 6px 16px; font-size: 12px;">Register</a>
+        <% } %>
+
+        <!-- Cart Button with Live Counter Badge -->
+        <a href="/cart" id="headerCartBtn" class="cart-btn">
+          <span>Bag</span>
+          <span class="cart-pill" id="cart-count"><%= typeof cartCount !== 'undefined' ? cartCount : 0 %></span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Alerts Partial -->
+  <%- include('flash') %>

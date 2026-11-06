@@ -1,0 +1,84 @@
+<%- include('partials/header') %>
+
+<main class="site-main">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">Your Order History</h1>
+        <p class="section-subtitle">
+          View past purchases, dispatch confirmations, and itemized receipts
+        </p>
+      </div>
+      <a href="/products" class="btn btn-secondary" style="font-size: 12px; padding: 6px 16px;">
+        Browse Catalog &rarr;
+      </a>
+    </div>
+
+    <% if (orders && orders.length > 0) { %>
+      <div class="order-history-list" id="orderHistoryContainer">
+        <% orders.forEach(order => { %>
+          <div class="order-history-card" data-order-id="<%= order.order_id %>">
+            <div class="order-header">
+              <div>
+                <span class="order-id-text"><%= order.order_id %></span>
+                <span style="font-size: 13px; color: var(--color-text-muted); margin-left: 12px;">
+                  Placed on <%= new Date(order.created_at).toLocaleDateString() %> at <%= new Date(order.created_at).toLocaleTimeString() %>
+                </span>
+              </div>
+              <div>
+                <span class="status-badge status-confirmed"><%= order.status %></span>
+              </div>
+            </div>
+
+            <!-- Items Table in Order -->
+            <div style="margin-bottom: 16px;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <thead>
+                  <tr style="border-bottom: 1px solid var(--color-card-border); color: var(--color-text-muted); text-align: left;">
+                    <th style="padding: 8px 0; font-weight: 600;">Artisan Product</th>
+                    <th style="padding: 8px 0; text-align: center; font-weight: 600;">Unit Price</th>
+                    <th style="padding: 8px 0; text-align: center; font-weight: 600;">Quantity</th>
+                    <th style="padding: 8px 0; text-align: right; font-weight: 600;">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (order.items && order.items.length > 0) { %>
+                    <% order.items.forEach(item => { %>
+                      <tr style="border-bottom: 1px dashed var(--color-card-border);">
+                        <td style="padding: 10px 0; font-weight: 600; color: var(--color-forest-deep);"><%= item.product_name %></td>
+                        <td style="padding: 10px 0; text-align: center;">$<%= item.price.toFixed(2) %></td>
+                        <td style="padding: 10px 0; text-align: center;"><%= item.quantity %></td>
+                        <td style="padding: 10px 0; text-align: right; font-weight: 600;">$<%= item.subtotal.toFixed(2) %></td>
+                      </tr>
+                    <% }); %>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Order Total & Shipping Info -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-card-border); padding-top: 12px; font-size: 13px;">
+              <div style="color: var(--color-text-muted);">
+                Destination: <strong style="color: var(--color-text-main);"><%= order.shipping_address %></strong>
+              </div>
+              <div style="font-size: 16px; font-weight: 700; color: var(--color-forest-deep);">
+                Total Amount Paid: <span style="color: var(--color-terracotta); font-size: 18px;">$<%= order.total_amount.toFixed(2) %></span>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <div class="empty-icon">📜</div>
+        <h2 class="empty-title">No Orders Placed Yet</h2>
+        <p class="empty-desc">
+          You haven't made any purchases yet. When you place an order, its details and status will be recorded here.
+        </p>
+        <a href="/products" class="btn btn-primary">Start Exploring Our Pieces</a>
+      </div>
+    <% } %>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

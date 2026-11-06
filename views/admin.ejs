@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Studio Admin Cockpit | Aura & Forma' %></title>
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="admin-body">
+
+  <div class="admin-layout">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand-header">
+        <div class="admin-brand-title">AURA & FORMA</div>
+        <span class="admin-brand-badge">Studio Management</span>
+      </div>
+
+      <ul class="admin-nav">
+        <li class="admin-nav-item active">
+          <a href="/admin">📊 Inventory & Catalog</a>
+        </li>
+        <li class="admin-nav-item">
+          <a href="/products" target="_blank">🌐 Live Storefront &nearr;</a>
+        </li>
+        <li class="admin-nav-item">
+          <a href="/orders" target="_blank">📜 Orders Tracking</a>
+        </li>
+      </ul>
+
+      <div class="admin-sidebar-footer">
+        <div style="font-size: 12px; color: #7A8E82; margin-bottom: 8px;">
+          Signed in as: <strong style="color: #FFFFFF;"><%= user.name %></strong>
+        </div>
+        <a href="/logout" id="adminLogoutBtn" class="btn btn-secondary" style="border-color: #3B4E43; color: #FFFFFF; width: 100%; font-size: 12px; padding: 6px;">
+          Sign Out
+        </a>
+      </div>
+    </aside>
+
+    <!-- Admin Main Body -->
+    <main class="admin-main">
+      <!-- Admin Header -->
+      <div class="admin-header">
+        <div>
+          <h1 class="admin-title">Studio Operations & Inventory Control</h1>
+          <p class="admin-meta">Real-time SQLite database management, product additions, and stock replenishment</p>
+        </div>
+        <div>
+          <a href="#addProductSection" class="btn btn-primary" style="font-size: 13px; padding: 10px 18px;">
+            + Add New Artisan Piece
+          </a>
+        </div>
+      </div>
+
+      <!-- Flash Messages -->
+      <%- include('partials/flash') %>
+
+      <!-- Key Performance Metrics Cards -->
+      <div class="admin-stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Catalog Pieces</div>
+          <div class="stat-value" id="statTotalProducts"><%= stats.totalProducts %></div>
+        </div>
+
+        <div class="stat-card stat-card-success">
+          <div class="stat-label">Active Storefront Items</div>
+          <div class="stat-value" id="statActiveProducts"><%= stats.activeProducts %></div>
+        </div>
+
+        <div class="stat-card stat-card-warning">
+          <div class="stat-label">Low Stock Alerts (&le; 5)</div>
+          <div class="stat-value" id="statLowStock"><%= stats.lowStockCount %></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Simulated Gross Sales</div>
+          <div class="stat-value" id="statRevenue">$<%= stats.totalRevenue %></div>
+        </div>
+      </div>
+
+      <!-- Operations Split Grid: Add/Edit Product & Inventory Management -->
+      <div class="admin-split-grid">
+        <!-- Add New Product Form Card -->
+        <div class="admin-card" id="addProductSection">
+          <h3 class="admin-card-title">+ Register New Artisan Work</h3>
+
+          <form action="/admin/products/add" method="POST" id="addProductForm">
+            <div class="admin-form-group">
+              <label for="addProdName" class="admin-label">Product Name *</label>
+              <input type="text" name="name" id="addProdName" class="admin-input" placeholder="e.g. Mino-Yaki Ceramic Cup" required>
+            </div>
+
+            <div class="admin-form-group">
+              <label for="addProdCat" class="admin-label">Category / Craft Discipline *</label>
+              <select name="category" id="addProdCat" class="admin-select" required>
+                <option value="Ceramics">Ceramics</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Lighting">Lighting</option>
+                <option value="Textiles">Textiles</option>
+                <option value="Fragrance">Fragrance</option>
+              </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="admin-form-group">
+                <label for="addProdPrice" class="admin-label">Price ($ USD) *</label>
+                <input type="number" step="0.01" name="price" id="addProdPrice" class="admin-input" placeholder="45.00" min="0" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="addProdStock" class="admin-label">Initial Stock *</label>
+                <input type="number" name="stock" id="addProdStock" class="admin-input" placeholder="15" min="0" required>
+              </div>
+            </div>
+
+            <div class="admin-form-group">
+              <label for="addProdDesc" class="admin-label">Craft & Material Description *</label>
+              <textarea name="description" id="addProdDesc" rows="3" class="admin-textarea" placeholder="Handcrafted details, glaze type, dimensions..." required></textarea>
+            </div>
+
+            <div class="admin-form-group">
+              <label for="addProdImg" class="admin-label">Image URL (Optional)</label>
+              <input type="url" name="image_url" id="addProdImg" class="admin-input" placeholder="https://images.unsplash.com/...">
+            </div>
+
+            <button type="submit" id="addProdSubmit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 13px;">
+              Add Product To Catalog
+            </button>
+          </form>
+        </div>
+
+        <!-- Inventory Data Table -->
+        <div class="admin-card">
+          <h3 class="admin-card-title">Live Inventory Matrix</h3>
+
+          <div class="table-responsive">
+            <table class="admin-table" id="inventoryTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Piece Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock Status</th>
+                  <th>State</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% products.forEach(prod => { %>
+                  <tr id="prodRow_<%= prod.id %>">
+                    <td><code>#<%= prod.id %></code></td>
+                    <td>
+                      <strong style="color: #FFFFFF;"><%= prod.name %></strong>
+                    </td>
+                    <td><span style="color: #A3B5AA;"><%= prod.category %></span></td>
+                    <td><strong>$<%= prod.price.toFixed(2) %></strong></td>
+                    <td>
+                      <% if (prod.stock <= 0) { %>
+                        <span class="stock-pill stock-out">Out of Stock (0)</span>
+                      <% } else if (prod.stock <= 5) { %>
+                        <span class="stock-pill stock-low">Low (<%= prod.stock %>)</span>
+                      <% } else { %>
+                        <span class="stock-pill stock-healthy">Healthy (<%= prod.stock %>)</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <form action="/admin/products/delete/<%= prod.id %>" method="POST" style="display: inline;">
+                        <input type="hidden" name="action" value="toggle">
+                        <button type="submit" class="btn-admin-sm btn-admin-toggle" title="Click to toggle status">
+                          <%= prod.is_active === 1 ? '🟢 Active' : '⚪ Inactive' %>
+                        </button>
+                      </form>
+                    </td>
+                    <td>
+                      <div class="table-actions">
+                        <!-- Edit Button (populates edit form) -->
+                        <button 
+                          type="button" 
+                          id="editProdBtn" 
+                          class="btn-admin-sm btn-admin-edit editProdBtn"
+                          data-id="<%= prod.id %>"
+                          data-name="<%= prod.name %>"
+                          data-desc="<%= prod.description %>"
+                          data-category="<%= prod.category %>"
+                          data-price="<%= prod.price %>"
+                          data-stock="<%= prod.stock %>"
+                          data-img="<%= prod.image_url %>"
+                        >
+                          Edit
+                        </button>
+
+                        <!-- Delete Button -->
+                        <form action="/admin/products/delete/<%= prod.id %>" method="POST" onsubmit="return confirm('Confirm deletion or deactivation of this product?');" style="display: inline;">
+                          <input type="hidden" name="action" value="delete">
+                          <button type="submit" id="deleteProdBtn" class="btn-admin-sm btn-admin-delete deleteProdBtn">
+                            Delete
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Edit Product Modal / Form Drawer -->
+      <div class="admin-card" id="editModal" style="display: none; border-color: var(--color-terracotta); margin-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-admin-border); padding-bottom: 12px; margin-bottom: 18px;">
+          <h3 style="font-family: var(--font-display); font-size: 20px; color: var(--color-terracotta);">
+            ✏️ Update Product Specifications
+          </h3>
+          <button type="button" onclick="document.getElementById('editModal').style.display='none'" style="background: none; border: none; color: #FFFFFF; font-size: 20px; cursor: pointer;">&times;</button>
+        </div>
+
+        <form action="" method="POST" id="editProductForm">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+            <div class="admin-form-group">
+              <label for="editProdName" class="admin-label">Name</label>
+              <input type="text" name="name" id="editProdName" class="admin-input" required>
+            </div>
+            <div class="admin-form-group">
+              <label for="editProdCat" class="admin-label">Category</label>
+              <input type="text" name="category" id="editProdCat" class="admin-input" required>
+            </div>
+            <div class="admin-form-group">
+              <label for="editProdPrice" class="admin-label">Price ($)</label>
+              <input type="number" step="0.01" name="price" id="editProdPrice" class="admin-input" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
+            <div class="admin-form-group">
+              <label for="editProdStock" class="admin-label">Stock Quantity</label>
+              <input type="number" name="stock" id="editProdStock" class="admin-input" required>
+            </div>
+            <div class="admin-form-group">
+              <label for="editProdImg" class="admin-label">Image URL</label>
+              <input type="url" name="image_url" id="editProdImg" class="admin-input">
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="editProdDesc" class="admin-label">Description</label>
+            <textarea name="description" id="editProdDesc" rows="2" class="admin-textarea" required></textarea>
+          </div>
+
+          <div style="display: flex; gap: 12px;">
+            <button type="submit" id="editProdSubmit" class="btn btn-primary" style="padding: 10px 24px; font-size: 13px;">
+              Save Changes
+            </button>
+            <button type="button" onclick="document.getElementById('editModal').style.display='none'" class="btn btn-secondary" style="border-color: #374A3E; color: #FFFFFF; font-size: 13px;">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

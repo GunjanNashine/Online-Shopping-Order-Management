@@ -1,0 +1,57 @@
+<%- include('partials/header') %>
+
+<main class="site-main">
+  <div class="container">
+    <div class="confirmation-hero">
+      <div class="confirmation-icon">✨</div>
+      <h1 style="font-family: var(--font-display); font-size: 36px; color: var(--color-forest-deep); margin-bottom: 8px;">
+        Order Successfully Confirmed!
+      </h1>
+      <p style="color: var(--color-text-muted); font-size: 15px;">
+        Thank you, <%= user.name %>. Your order has been registered in the database, and the artisan inventory has been securely decremented.
+      </p>
+
+      <div class="order-id-pill" id="orderConfirmationId">
+        ORDER ID: <span id="order-id"><%= order.order_id %></span>
+      </div>
+
+      <div style="font-size: 13px; color: var(--color-sage-dark); font-weight: 600; margin-bottom: 24px;">
+        Status: <%= order.status %> • Date: <%= new Date(order.created_at).toLocaleDateString() %>
+      </div>
+
+      <!-- Items Ordered Breakdown -->
+      <div style="background-color: var(--color-sand-canvas); border: 1px solid var(--color-card-border); border-radius: var(--radius-md); padding: 24px; text-align: left; max-width: 520px; margin: 0 auto 32px;">
+        <h4 style="font-family: var(--font-display); font-size: 16px; margin-bottom: 12px; border-bottom: 1px solid var(--color-card-border); padding-bottom: 8px;">
+          Purchased Artifacts
+        </h4>
+        <% orderItems.forEach(item => { %>
+          <div style="display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0;">
+            <span><%= item.product_name %> &times; <%= item.quantity %></span>
+            <span style="font-weight: 600;">$<%= item.subtotal.toFixed(2) %></span>
+          </div>
+        <% }); %>
+
+        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; border-top: 1px solid var(--color-card-border); padding-top: 10px; margin-top: 10px; color: var(--color-forest-deep);">
+          <span>Total Order Value:</span>
+          <span style="color: var(--color-terracotta);">$<%= order.total_amount.toFixed(2) %></span>
+        </div>
+
+        <div style="font-size: 12px; color: var(--color-text-muted); margin-top: 12px;">
+          Shipping Destination: <%= order.shipping_address %>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 16px; justify-content: center;">
+        <a href="/orders" id="orderHistoryBtn" class="btn btn-primary orderHistoryBtn">
+          View In Order History
+        </a>
+        <a href="/products" class="btn btn-secondary">
+          Continue Shopping
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

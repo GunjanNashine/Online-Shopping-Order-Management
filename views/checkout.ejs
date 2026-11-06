@@ -1,0 +1,101 @@
+<%- include('partials/header') %>
+
+<main class="site-main">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">Review & Simulated Checkout</h1>
+        <p class="section-subtitle">
+          Confirm your delivery destination and finalize your studio reservation
+        </p>
+      </div>
+      <a href="/cart" class="nav-link" style="font-size: 13px;">&larr; Back to Shopping Bag</a>
+    </div>
+
+    <% if (typeof stockError !== 'undefined' && stockError) { %>
+      <div class="alert alert-danger" id="stockAlert">
+        <span>⚠️ <strong>Stock Validation Error:</strong> <%= stockError %></span>
+      </div>
+    <% } %>
+
+    <div class="checkout-card">
+      <form action="/checkout" method="POST">
+        <!-- Order Items Breakdown -->
+        <h3 style="font-family: var(--font-display); font-size: 20px; color: var(--color-forest-deep); margin-bottom: 18px; border-bottom: 1px solid var(--color-card-border); padding-bottom: 10px;">
+          Reserved Studio Items
+        </h3>
+
+        <div style="margin-bottom: 28px;">
+          <% cartItems.forEach(item => { %>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--color-card-border);">
+              <div>
+                <strong style="color: var(--color-forest-deep);"><%= item.name %></strong>
+                <div style="font-size: 12px; color: var(--color-text-muted);">
+                  Qty: <%= item.quantity %> &times; $<%= item.price.toFixed(2) %>
+                </div>
+              </div>
+              <div style="font-weight: 700; color: var(--color-forest-deep);">
+                $<%= item.subtotal.toFixed(2) %>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+
+        <!-- Shipping Destination -->
+        <h3 style="font-family: var(--font-display); font-size: 20px; color: var(--color-forest-deep); margin-bottom: 18px; border-bottom: 1px solid var(--color-card-border); padding-bottom: 10px;">
+          Delivery Destination
+        </h3>
+
+        <div class="form-group">
+          <label for="shippingAddress" class="form-label">Delivery Address / Studio Studio Location:</label>
+          <input 
+            type="text" 
+            name="shippingAddress" 
+            id="shippingAddress" 
+            class="form-input" 
+            value="124 Artisanal Way, Craft Studio District, NY 10012"
+            required
+          >
+        </div>
+
+        <!-- Financial Summary -->
+        <div style="background-color: var(--color-sand-canvas); border: 1px solid var(--color-card-border); border-radius: var(--radius-md); padding: 20px; margin: 24px 0;">
+          <div class="summary-row">
+            <span>Items Subtotal:</span>
+            <span>$<%= subtotal.toFixed(2) %></span>
+          </div>
+          <div class="summary-row">
+            <span>Carbon-Neutral Freight:</span>
+            <span>$<%= shipping.toFixed(2) %></span>
+          </div>
+          <div class="summary-row">
+            <span>Estimated State Tax (5%):</span>
+            <span>$<%= tax.toFixed(2) %></span>
+          </div>
+          <div class="summary-row summary-total" style="font-size: 20px;">
+            <span>Grand Total:</span>
+            <span style="color: var(--color-terracotta);">$<%= grandTotal.toFixed(2) %></span>
+          </div>
+        </div>
+
+        <!-- Simulated Checkout Notice -->
+        <div style="background-color: #FEF3C7; border: 1px solid #F59E0B; border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 24px; font-size: 13px; color: #92400E;">
+          ℹ️ <strong>Simulated Academic Demonstration:</strong> No real payment gateway will be charged. Clicking below executes an atomic SQLite transaction that updates inventory and logs your confirmed order.
+        </div>
+
+        <!-- Order Placement Button -->
+        <button 
+          type="submit" 
+          id="confirmCheckoutBtn" 
+          class="btn btn-primary" 
+          style="width: 100%; padding: 16px; font-size: 16px; font-weight: 700;"
+          <%= stockError ? 'disabled' : '' %>
+        >
+          Confirm Order & Complete Reservation
+        </button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

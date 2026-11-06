@@ -1,0 +1,67 @@
+<%- include('partials/header') %>
+
+<main class="site-main">
+  <div class="container">
+    <div class="auth-wrapper">
+      <div class="auth-header">
+        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-terracotta); font-weight: 700;">Join The Studio</span>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Register to reserve bespoke pieces and track delivery status</p>
+      </div>
+
+      <!-- Registration Form with Stable IDs for Selenium Testing -->
+      <form action="/register" method="POST" id="registerForm">
+        <div class="form-group">
+          <label for="name" class="form-label">Full Name</label>
+          <input 
+            type="text" 
+            name="name" 
+            id="name" 
+            class="form-input" 
+            placeholder="e.g. Eleanor Vance" 
+            required 
+            autocomplete="name"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="regEmail" class="form-label">Email Address</label>
+          <input 
+            type="email" 
+            name="email" 
+            id="regEmail" 
+            class="form-input" 
+            placeholder="e.g. eleanor@example.com" 
+            required 
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="regPassword" class="form-label">Password (Min. 6 characters)</label>
+          <input 
+            type="password" 
+            name="password" 
+            id="regPassword" 
+            class="form-input" 
+            placeholder="••••••••" 
+            required 
+            minlength="6"
+            autocomplete="new-password"
+          >
+        </div>
+
+        <button type="submit" id="registerBtn" class="btn btn-primary registerBtn" style="width: 100%; padding: 13px; font-size: 15px; margin-top: 10px;">
+          Create Studio Account
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already an account holder? 
+        <a href="/login" class="auth-link">Sign In</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

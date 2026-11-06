@@ -1,0 +1,137 @@
+<%- include('partials/header') %>
+
+<main class="site-main">
+  <div class="container">
+    <!-- Distinctive Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="hero-subtitle">Studio Edition • Spring 2026</span>
+        <h1 class="hero-title">Deliberate living through handcrafted form.</h1>
+        <p class="hero-description">
+          Discover a curated anthology of artisanal homeware, raw terracotta ceramics, carved solid oak furniture, and ambient sculptural lighting. Thoughtfully created for modern sanctuaries.
+        </p>
+        <div class="hero-actions">
+          <a href="/products" class="btn btn-primary">Explore The Catalogue</a>
+          <a href="/products?category=Ceramics" class="btn btn-secondary">Ceramics Studio</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-image-frame">
+          <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=80" alt="Curated Artisanal Homeware Interior">
+        </div>
+        <div class="hero-badge-floating">
+          <div class="hero-badge-title">Handmade Quality</div>
+          <div class="hero-badge-text">100% Sustainably Sourced</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Promotional Value Proposition Banners -->
+    <section class="value-props">
+      <div class="value-card">
+        <div class="value-icon">🏺</div>
+        <h3 class="value-title">Studio Craftsmanship</h3>
+        <p class="value-desc">Every piece is hand-turned by independent master potters and woodworkers.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🌿</div>
+        <h3 class="value-title">Conscious Materials</h3>
+        <p class="value-desc">FSC-certified timber, natural beeswax, slub silk, and non-toxic mineral glazes.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">📦</div>
+        <h3 class="value-title">Zero Plastic Packaging</h3>
+        <p class="value-desc">Biodegradable cardboard cushions and plant-fiber reinforced shipping tape.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🛡️</div>
+        <h3 class="value-title">Safe Simulated Checkout</h3>
+        <p class="value-desc">ACID transaction-guaranteed inventory reservation and instant dispatch tracking.</p>
+      </div>
+    </section>
+
+    <!-- Category Filter Quick Access -->
+    <section style="margin-bottom: 48px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Explore by Studio Discipline</h2>
+          <p class="section-subtitle">Select an artisanal craft medium to view curated collections</p>
+        </div>
+        <a href="/products" class="btn btn-secondary" style="font-size: 12px; padding: 6px 16px;">View Full Index &rarr;</a>
+      </div>
+      <div class="category-pills">
+        <a href="/products" class="category-pill active">All Disciplines</a>
+        <% categories.forEach(category => { %>
+          <a href="/products?category=<%= encodeURIComponent(category) %>" class="category-pill">
+            <%= category %>
+          </a>
+        <% }); %>
+      </div>
+    </section>
+
+    <!-- Featured Artisanal Pieces Grid -->
+    <section style="margin-bottom: 64px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Curator's Highlights</h2>
+          <p class="section-subtitle">Hand-selected masterworks celebrating organic texture and silhouette</p>
+        </div>
+      </div>
+
+      <div class="product-grid">
+        <% featuredProducts.forEach(product => { %>
+          <article class="product-card" data-product-id="<%= product.id %>">
+            <div class="product-thumbnail-wrapper">
+              <img src="<%= product.image_url %>" alt="<%= product.name %>" class="product-thumbnail" loading="lazy">
+              <% if (product.stock <= 0) { %>
+                <span class="product-badge-stock badge-out-of-stock">Sold Out</span>
+              <% } else if (product.stock <= 5) { %>
+                <span class="product-badge-stock badge-low-stock">Only <%= product.stock %> Left</span>
+              <% } else { %>
+                <span class="product-badge-stock badge-in-stock">In Stock</span>
+              <% } %>
+            </div>
+            <div class="product-info">
+              <span class="product-category-tag"><%= product.category %></span>
+              <h3 class="product-name"><%= product.name %></h3>
+              <p class="product-desc"><%= product.description %></p>
+              
+              <div class="product-footer">
+                <span class="product-price">$<%= product.price.toFixed(2) %></span>
+                <span class="product-stock-count">Stock: <%= product.stock %></span>
+              </div>
+
+              <div class="card-actions">
+                <form action="/cart/add" method="POST" style="width: 100%;">
+                  <input type="hidden" name="productId" value="<%= product.id %>">
+                  <input type="hidden" name="quantity" value="1">
+                  <button 
+                    type="submit" 
+                    id="addToCartBtn"
+                    class="btn-add-cart addToCartBtn" 
+                    data-testid="addToCartBtn"
+                    <%= product.stock <= 0 ? 'disabled' : '' %>
+                  >
+                    <%= product.stock <= 0 ? 'Unavailable' : 'Add to Bag' %>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    </section>
+
+    <!-- New Arrivals Banner -->
+    <section style="margin-bottom: 64px; background: #22342B; border-radius: var(--radius-lg); padding: 48px; color: #FFFFFF; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px;">
+      <div>
+        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-terracotta); font-weight: 700;">Limited Batch Release</span>
+        <h2 style="font-family: var(--font-display); font-size: 32px; margin-top: 8px; margin-bottom: 8px;">Architectural Travertine & Kyoto Ceramics</h2>
+        <p style="color: #A3B5AA; max-width: 520px; font-size: 14px;">Numbered small-run works carved from volcanic tufa and thrown with iron-rich clay. Once exhausted, batches will not be repeated this season.</p>
+      </div>
+      <a href="/products" class="btn btn-primary" style="white-space: nowrap;">Shop The Limited Batch</a>
+    </section>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

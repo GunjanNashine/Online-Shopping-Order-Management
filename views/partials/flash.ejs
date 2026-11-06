@@ -1,0 +1,15 @@
+<div class="flash-container">
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger" id="alertMessage" role="alert">
+      <span><strong>Notice:</strong> <%= error %></span>
+      <button type="button" class="alert-close" aria-label="Close alert">&times;</button>
+    </div>
+  <% } %>
+
+  <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success" id="alert-success" role="status">
+      <span><strong>Success:</strong> <%= success %></span>
+      <button type="button" class="alert-close" aria-label="Close alert">&times;</button>
+    </div>
+  <% } %>
+</div>

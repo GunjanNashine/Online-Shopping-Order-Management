@@ -1,0 +1,128 @@
+<%- include('partials/header') %>
+
+<main class="site-main">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">Your Shopping Bag</h1>
+        <p class="section-subtitle">
+          Review your selected artisanal goods before simulated checkout
+        </p>
+      </div>
+      <a href="/products" class="nav-link" style="font-size: 13px;">&larr; Continue Exploring</a>
+    </div>
+
+    <% if (cartItems && cartItems.length > 0) { %>
+      <div class="cart-layout">
+        <!-- Cart Items List -->
+        <div class="cart-table-card">
+          <% cartItems.forEach(item => { %>
+            <div class="cart-item-row" data-cart-id="<%= item.cart_item_id %>">
+              <!-- Thumbnail -->
+              <img src="<%= item.image_url %>" alt="<%= item.name %>" class="cart-thumb">
+
+              <!-- Details -->
+              <div>
+                <h4 class="cart-item-title"><%= item.name %></h4>
+                <div class="cart-item-meta">
+                  Category: <%= item.category %> • Unit: $<%= item.price.toFixed(2) %>
+                </div>
+                <div style="font-size: 11px; margin-top: 4px; color: <%= item.stock < item.quantity ? 'var(--color-danger)' : 'var(--color-sage-dark)' %>;">
+                  Available Studio Inventory: <%= item.stock %> units
+                </div>
+              </div>
+
+              <!-- Quantity Controls Form -->
+              <form action="/cart/update" method="POST" novalidate style="display: flex; align-items: center; gap: 8px;">
+                <input type="hidden" name="cartItemId" value="<%= item.cart_item_id %>">
+                <div class="qty-control">
+                  <button type="submit" name="action" value="decrease" class="qty-btn" title="Decrease Quantity">-</button>
+                  <input 
+                    type="number" 
+                    name="quantity" 
+                    id="quantity" 
+                    class="qty-input" 
+                    value="<%= item.quantity %>" 
+                    min="1"
+                  >
+                  <button type="submit" name="action" value="increase" class="qty-btn" title="Increase Quantity">+</button>
+                </div>
+                <button type="submit" id="updateCartBtn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 11px;">
+                  Update
+                </button>
+              </form>
+
+              <!-- Item Subtotal -->
+              <div class="cart-item-subtotal">
+                $<%= item.subtotal.toFixed(2) %>
+              </div>
+
+              <!-- Remove Item Form -->
+              <form action="/cart/remove" method="POST">
+                <input type="hidden" name="cartItemId" value="<%= item.cart_item_id %>">
+                <button 
+                  type="submit" 
+                  id="removeProductBtn" 
+                  class="btn-remove removeProductBtn" 
+                  data-testid="removeProductBtn"
+                  title="Remove item from bag"
+                >
+                  ✕
+                </button>
+              </form>
+            </div>
+          <% }); %>
+        </div>
+
+        <!-- Order Summary Column -->
+        <div class="order-summary-card">
+          <h3 class="summary-title">Summary (<%= totalItems %> <%= totalItems === 1 ? 'Piece' : 'Pieces' %>)</h3>
+          
+          <div class="summary-row">
+            <span>Bag Subtotal</span>
+            <span id="cartSubtotal" style="font-weight: 600;">$<%= grandTotal.toFixed(2) %></span>
+          </div>
+          
+          <div class="summary-row">
+            <span>Simulated Shipping</span>
+            <span><%= grandTotal >= 100 ? 'Complimentary ($0.00)' : '$15.00' %></span>
+          </div>
+
+          <div class="summary-row">
+            <span>Estimated Studio Tax (5%)</span>
+            <span>$<%= (grandTotal * 0.05).toFixed(2) %></span>
+          </div>
+
+          <div class="summary-row summary-total">
+            <span>Total Calculation</span>
+            <span id="cartTotal" style="color: var(--color-terracotta);">
+              $<%= (grandTotal + (grandTotal >= 100 ? 0 : 15.00) + (grandTotal * 0.05)).toFixed(2) %>
+            </span>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <a href="/checkout" id="checkoutBtn" class="btn btn-primary checkoutBtn" style="width: 100%; padding: 14px 20px;">
+              Proceed to Simulated Checkout &rarr;
+            </a>
+          </div>
+
+          <div style="margin-top: 16px; font-size: 12px; color: var(--color-text-muted); text-align: center;">
+            🔒 Safe atomic SQLite checkout • Real-time stock reservation
+          </div>
+        </div>
+      </div>
+    <% } else { %>
+      <!-- Empty Bag State -->
+      <div class="empty-state" id="emptyCartAlert">
+        <div class="empty-icon">🛍️</div>
+        <h2 class="empty-title">Your Shopping Bag is Empty</h2>
+        <p class="empty-desc">
+          You currently have no artisanal goods in your bag. Explore our curated collections to select hand-turned stoneware, bespoke lighting, and natural textiles.
+        </p>
+        <a href="/products" class="btn btn-primary">Discover Handcrafted Catalog</a>
+      </div>
+    <% } %>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
