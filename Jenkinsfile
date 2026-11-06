@@ -4,7 +4,6 @@ pipeline {
     environment {
         APP_NAME = 'online-shopping'
         APP_TAG = 'latest'
-        DOCKER_BIN = 'C:\\Users\\rupes\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
     }
 
     stages {
@@ -32,7 +31,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker container image...'
-                bat "\"\" build -t %APP_NAME%:%APP_TAG% ."
+                bat '"C:\\Users\\rupes\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t %APP_NAME%:%APP_TAG% .'
             }
         }
     }
