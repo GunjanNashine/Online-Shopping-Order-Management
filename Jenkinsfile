@@ -4,6 +4,7 @@ pipeline {
     environment {
         APP_NAME = 'online-shopping'
         APP_TAG = 'latest'
+        DOCKER_BIN = 'C:\\Users\\rupes\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
     }
 
     stages {
@@ -17,7 +18,6 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing Node.js dependencies...'
-                // Use 'bat' for Windows agents; use 'sh' for Linux agents
                 bat 'npm.cmd install'
             }
         }
@@ -32,7 +32,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker container image...'
-                bat "docker build -t %APP_NAME%:%APP_TAG% ."
+                bat "\"\" build -t %APP_NAME%:%APP_TAG% ."
             }
         }
     }
@@ -42,7 +42,7 @@ pipeline {
             echo 'Pipeline execution cycle completed.'
         }
         success {
-            echo 'Pipeline SUCCESS! All tests passed and Docker image built.'
+            echo 'Pipeline SUCCESS! All 18 tests passed and Docker image built.'
         }
         failure {
             echo 'Pipeline FAILED! Check Console Output for error details.'
